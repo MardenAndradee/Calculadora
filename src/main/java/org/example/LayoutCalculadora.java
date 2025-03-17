@@ -68,9 +68,6 @@ public class LayoutCalculadora extends JFrame implements ActionListener {
         painel.add(painelBotoes);
         painelBotoes.setBounds(10,50,560,400);
 
-//        btnFechar.addActionListener(this);
-//        btnImprimir.addActionListener(this);
-
     }
 
     public void configurarBotoes(){
@@ -94,12 +91,12 @@ public class LayoutCalculadora extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae){
         String texto = taArea.getText();
-        String gac = ae.getActionCommand();
-        double n1;
-        double n2;
+        String comando = ae.getActionCommand();
 
         if(ae.getSource().equals(btnAC)){
             taArea.setText("");
+            valorAnterior = 0;
+            operador = "";
         }
         if(ae.getSource().equals(btnUm)){
             texto += "1";
@@ -162,70 +159,51 @@ public class LayoutCalculadora extends JFrame implements ActionListener {
             for (int i = 2; i <= n; i++) fat *= i;
             taArea.setText(Long.toString(fat));
         }
-        if(ae.getSource().equals(btnMais)){
-            valorAnterior = Double.parseDouble(texto);
-            operador = gac;
-            taArea.setText("");
-        }
-        if(ae.getSource().equals(btnSubtrair)){
-            valorAnterior = Double.parseDouble(texto);
-            operador = gac;
-            taArea.setText("");
-        }
-        if(ae.getSource().equals(btnMultiplicar)){
-            valorAnterior = Double.parseDouble(texto);
-            operador = gac;
-            taArea.setText("");
-        }
-        if(ae.getSource().equals(btnBarra)){
-            valorAnterior = Double.parseDouble(texto);
-            operador = gac;
-            taArea.setText("");
-        }
-        if(ae.getSource().equals(btnXY)){
-            valorAnterior = Double.parseDouble(texto);
-            operador = gac;
-            taArea.setText("");
-        }
-        if(ae.getSource().equals(btnResultado)){
-            double valorAtual = Double.parseDouble(texto);
-            double resultado = 0;
-            switch (operador) {
-                case "+": resultado = valorAnterior + valorAtual; break;
-                case "-": resultado = valorAnterior - valorAtual; break;
-                case "*": resultado = valorAnterior * valorAtual; break;
-                case "/": resultado = valorAnterior / valorAtual; break;
-                case "xʸ": resultado = Math.pow(valorAnterior, valorAtual); break;
+        if ("+-*/xʸ".contains(comando)) {
+                if (!operador.isEmpty()) {
+                    calcular();
+                }
+                valorAnterior = Double.parseDouble(taArea.getText());
+                operador = comando;
+                novoValor = true;
+            } 
+        if (comando.equals("=")) {
+            calcular();
+        } else {
+            if (!operador.isEmpty()) {
+                calcular();
             }
-            taArea.setText(Double.toString(resultado));
-            operador = "";
+            operador = comando;
+            valorAnterior = Double.parseDouble(texto);
+            novoValor = true;
         }
 
+    }
 
+     private void calcular() {
+        double valorAtual = Double.parseDouble(taArea.getText());
+        double resultado = 0;
 
-//        if(ae.getSource().equals(btnImprimir)){
-//            String texto = combo.getSelectedItem().toString();
-//
-//            texto += " - " + taArea.getText();
-//
-//            if(cbMasculino.isSelected()){
-//                texto += " - " + cbMasculino.getText();
-//            }
-//            if(cbFeminino.isSelected()){
-//                texto += " - " + cbFeminino.getText();
-//            }
-//            if(rbFeminino.isSelected()){
-//                texto += " - " + rbFeminino.getText();
-//            }else if(rbMasculino.isSelected()){
-//                texto += " - " + rbMasculino.getText();
-//            }
-//
-//
-//
-//            //JOptionPane.showMessageDialog(this, texto);
-//            taArea.setText(texto);
-//
-//        }
+        switch (operador) {
+            case "+": 
+                resultado = valorAnterior + valorAtual; 
+                break;
+            case "-": 
+                resultado = valorAnterior - valorAtual; 
+                break;
+            case "*":
+                resultado = valorAnterior * valorAtual; 
+                break;
+            case "/": 
+                resultado = valorAnterior / valorAtual;
+                break;
+            case "xʸ": resultado = Math.pow(valorAnterior, valorAtual); 
+                break;
+        }
+
+        taArea.setText(Double.toString(resultado));
+        valorAnterior = resultado;
+        novoValor = true;
     }
 
 }
